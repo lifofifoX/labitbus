@@ -46,3 +46,4 @@ data/
 *.sqlite
 *.sqlite3
 test_server.js
+test_index.js
