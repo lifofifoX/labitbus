@@ -122,21 +122,29 @@
         }
         
         .id-cell {
-            max-width: 25px;
-            width: 25px;
-            min-width: 25px;
+            max-width: 10px;
+            width: 10px;
+            min-width: 10px;
         }
         
         .txid-cell {
             max-width: 200px;
+            width: 200px;
+        }
+        
+        .sat-cell {
+            max-width: 120px;
+            width: 120px;
         }
         
         .checksum-cell {
             max-width: 150px;
+            width: 150px;
         }
         
         .inscription-cell {
             max-width: 200px;
+            width: 200px;
         }
         
         .container {
@@ -372,7 +380,7 @@
                     <tr>
                         <td class="id-cell">${item.id}</td>
                         <td class="txid-cell" title="${item.txid}">${item.txid}</td>
-                        <td>${item.sat || '-'}</td>
+                        <td class="sat-cell">${item.sat || '-'}</td>
                         <td class="checksum-cell" title="${item.checksum}">${item.checksum}</td>
                         <td class="inscription-cell" title="${item.inscription_id || ''}">${inscriptionLink}</td>
                     </tr>
