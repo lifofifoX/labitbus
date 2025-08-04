@@ -97,9 +97,11 @@
     </div>
     
     <div id="pagination" class="text-center mt-6 hidden">
-      <button id="prevPage" onclick="previousPage()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded mr-4 disabled:opacity-50 disabled:cursor-not-allowed">← Previous</button>
-      <span id="pageInfo" class="mx-6 text-gray-400"></span>
-      <button id="nextPage" onclick="nextPage()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded ml-4 disabled:opacity-50 disabled:cursor-not-allowed">Next →</button>
+      <div class="flex flex-wrap justify-center items-center gap-2">
+        <button id="prevPage" onclick="previousPage()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">← Previous</button>
+        <div id="pageNumbers" class="flex flex-wrap justify-center gap-1"></div>
+        <button id="nextPage" onclick="nextPage()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">Next →</button>
+      </div>
     </div>
     
     <div id="empty" class="text-center py-10 text-gray-400 hidden">
@@ -222,9 +224,60 @@
       
       if (totalPages > 1) {
         pagination.classList.remove('hidden');
-        document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages} (${filteredData.length} total entries)`;
         document.getElementById('prevPage').disabled = currentPage === 1;
         document.getElementById('nextPage').disabled = currentPage === totalPages;
+        
+        const pageNumbers = document.getElementById('pageNumbers');
+        pageNumbers.innerHTML = '';
+        
+        const maxVisiblePages = 10;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+        
+        if (endPage - startPage + 1 < maxVisiblePages) {
+          startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+        
+        if (startPage > 1) {
+          const firstButton = document.createElement('button');
+          firstButton.textContent = '1';
+          firstButton.className = 'px-3 py-2 rounded bg-gray-700 hover:bg-gray-600 text-white';
+          firstButton.onclick = () => { currentPage = 1; updateTable(); };
+          pageNumbers.appendChild(firstButton);
+          
+          if (startPage > 2) {
+            const ellipsis = document.createElement('span');
+            ellipsis.textContent = '...';
+            ellipsis.className = 'px-2 py-2 text-gray-400';
+            pageNumbers.appendChild(ellipsis);
+          }
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+          const pageButton = document.createElement('button');
+          pageButton.textContent = i;
+          pageButton.className = `px-3 py-2 rounded ${i === currentPage ? 'bg-green-600 text-black' : 'bg-gray-700 hover:bg-gray-600 text-white'}`;
+          pageButton.onclick = () => {
+            currentPage = i;
+            updateTable();
+          };
+          pageNumbers.appendChild(pageButton);
+        }
+        
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+            const ellipsis = document.createElement('span');
+            ellipsis.textContent = '...';
+            ellipsis.className = 'px-2 py-2 text-gray-400';
+            pageNumbers.appendChild(ellipsis);
+          }
+          
+          const lastButton = document.createElement('button');
+          lastButton.textContent = totalPages;
+          lastButton.className = 'px-3 py-2 rounded bg-gray-700 hover:bg-gray-600 text-white';
+          lastButton.onclick = () => { currentPage = totalPages; updateTable(); };
+          pageNumbers.appendChild(lastButton);
+        }
       } else {
         pagination.classList.add('hidden');
       }
