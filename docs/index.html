@@ -98,12 +98,35 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             overflow: hidden;
+            table-layout: fixed;
         }
         
         th, td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #eee;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .txid-cell {
+            max-width: 200px;
+        }
+        
+        .checksum-cell {
+            max-width: 150px;
+        }
+        
+        .inscription-cell {
+            max-width: 200px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            overflow-x: hidden;
         }
         
         th {
@@ -148,6 +171,16 @@
 <body>
     <div class="container">
         <h1>Labitbu Database</h1>
+        
+        <div style="text-align: center; margin-bottom: 30px; padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; color: #856404;">
+            <strong>⚠️ Unofficial & Experimental</strong><br>
+            This is an unofficial viewer for the Labitbu database. Data may be incomplete or inaccurate. Use at your own risk.
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 30px; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; color: #0c5460;">
+            <strong>🔗 Wrap Your Labitbu</strong><br>
+            Found your Labitbu? <a href="https://tx.dev/labitbu" target="_blank" style="color: #007bff; text-decoration: none; font-weight: bold;">Wrap it as an inscription</a> to preserve it on the same sat. <a href="https://x.com/lifofifo/status/1952057912043470968" target="_blank" style="color: #007bff; text-decoration: none;">Learn more</a>.
+        </div>
         
         <div class="stats" id="stats">
             <div class="stat">
@@ -300,11 +333,11 @@
             tbody.innerHTML = filteredData.map(item => `
                 <tr>
                     <td>${item.id}</td>
-                    <td>${item.txid}</td>
+                    <td class="txid-cell" title="${item.txid}">${item.txid}</td>
                     <td>${item.vin}</td>
                     <td>${item.sat || '-'}</td>
-                    <td>${item.checksum}</td>
-                    <td>${item.inscription_id || '-'}</td>
+                    <td class="checksum-cell" title="${item.checksum}">${item.checksum}</td>
+                    <td class="inscription-cell" title="${item.inscription_id || ''}">${item.inscription_id || '-'}</td>
                 </tr>
             `).join('');
             
