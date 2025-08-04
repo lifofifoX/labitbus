@@ -13,8 +13,8 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-            color: #333;
+            background: #1a1a1a;
+            color: #e0e0e0;
             line-height: 1.6;
         }
         
@@ -27,7 +27,7 @@
         h1 {
             text-align: center;
             margin-bottom: 30px;
-            color: #2c3e50;
+            color: #ffffff;
         }
         
         .stats {
@@ -38,30 +38,32 @@
         }
         
         .stat {
-            background: white;
+            background: #2d2d2d;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             text-align: center;
+            border: 1px solid #404040;
         }
         
         .stat-number {
             font-size: 2em;
             font-weight: bold;
-            color: #3498db;
+            color: #4fc3f7;
         }
         
         .stat-label {
-            color: #7f8c8d;
+            color: #b0b0b0;
             margin-top: 5px;
         }
         
         .controls {
-            background: white;
+            background: #2d2d2d;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 20px;
+            border: 1px solid #404040;
         }
         
         .controls-row {
@@ -73,14 +75,16 @@
         
         input, select {
             padding: 8px 12px;
-            border: 1px solid #ddd;
+            border: 1px solid #404040;
             border-radius: 4px;
             font-size: 14px;
+            background: #1a1a1a;
+            color: #e0e0e0;
         }
         
         button {
-            background: #3498db;
-            color: white;
+            background: #4fc3f7;
+            color: #1a1a1a;
             border: none;
             padding: 8px 16px;
             border-radius: 4px;
@@ -89,25 +93,36 @@
         }
         
         button:hover {
-            background: #2980b9;
+            background: #29b6f6;
+        }
+        
+        button:disabled {
+            background: #404040;
+            color: #808080;
+            cursor: not-allowed;
         }
         
         table {
             width: 100%;
-            background: white;
+            background: #2d2d2d;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             overflow: hidden;
             table-layout: fixed;
+            border: 1px solid #404040;
         }
         
         th, td {
             padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #404040;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+        
+        .id-cell {
+            max-width: 80px;
         }
         
         .txid-cell {
@@ -130,33 +145,34 @@
         }
         
         th {
-            background: #f8f9fa;
+            background: #404040;
             font-weight: 600;
-            color: #2c3e50;
+            color: #ffffff;
         }
         
         tr:hover {
-            background: #f8f9fa;
+            background: #404040;
         }
         
         .loading {
             text-align: center;
             padding: 40px;
-            color: #7f8c8d;
+            color: #b0b0b0;
         }
         
         .error {
             text-align: center;
             padding: 20px;
-            color: #e74c3c;
-            background: #fdf2f2;
+            color: #ff6b6b;
+            background: #2d1a1a;
             border-radius: 8px;
             margin: 20px 0;
+            border: 1px solid #404040;
         }
         
         .last-updated {
             text-align: center;
-            color: #7f8c8d;
+            color: #b0b0b0;
             margin: 20px 0;
             font-size: 14px;
         }
@@ -164,7 +180,7 @@
         .empty {
             text-align: center;
             padding: 40px;
-            color: #7f8c8d;
+            color: #b0b0b0;
         }
     </style>
 </head>
@@ -352,7 +368,7 @@
                 
                 return `
                     <tr>
-                        <td>${item.id}</td>
+                        <td class="id-cell">${item.id}</td>
                         <td class="txid-cell" title="${item.txid}">${item.txid}</td>
                         <td>${item.sat || '-'}</td>
                         <td class="checksum-cell" title="${item.checksum}">${item.checksum}</td>
