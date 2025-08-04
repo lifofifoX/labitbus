@@ -229,7 +229,6 @@
                 <tr>
                     <th>ID</th>
                     <th>TXID</th>
-                    <th>VIN</th>
                     <th>Sat</th>
                     <th>Checksum</th>
                     <th>Inscription ID</th>
@@ -239,6 +238,12 @@
             </tbody>
         </table>
         
+        <div id="pagination" style="display: none; text-align: center; margin-top: 20px;">
+            <button id="prevPage" onclick="previousPage()" style="margin-right: 10px;">← Previous</button>
+            <span id="pageInfo" style="margin: 0 20px;"></span>
+            <button id="nextPage" onclick="nextPage()" style="margin-left: 10px;">Next →</button>
+        </div>
+        
         <div id="empty" class="empty" style="display: none;">
             No entries found matching your criteria.
         </div>
@@ -247,6 +252,9 @@
     <script>
         let allData = [];
         let stats = {};
+        let currentPage = 1;
+        let itemsPerPage = 50;
+        let filteredData = [];
         
         async function loadData() {
             const loading = document.getElementById('loading');
@@ -308,13 +316,14 @@
             const tbody = document.getElementById('tableBody');
             const table = document.getElementById('dataTable');
             const empty = document.getElementById('empty');
+            const pagination = document.getElementById('pagination');
             
             const searchTxid = document.getElementById('searchTxid').value.toLowerCase();
             const searchChecksum = document.getElementById('searchChecksum').value.toLowerCase();
             const filterSat = document.getElementById('filterSat').value;
             const filterInscription = document.getElementById('filterInscription').value;
             
-            let filteredData = allData.filter(item => {
+            filteredData = allData.filter(item => {
                 if (searchTxid && !item.txid.toLowerCase().includes(searchTxid)) return false;
                 if (searchChecksum && !item.checksum.toLowerCase().includes(searchChecksum)) return false;
                 if (filterSat === 'has_sat' && item.sat === null) return false;
@@ -326,30 +335,66 @@
             
             if (filteredData.length === 0) {
                 table.style.display = 'none';
+                pagination.style.display = 'none';
                 empty.style.display = 'block';
                 return;
             }
             
-            tbody.innerHTML = filteredData.map(item => `
-                <tr>
-                    <td>${item.id}</td>
-                    <td class="txid-cell" title="${item.txid}">${item.txid}</td>
-                    <td>${item.vin}</td>
-                    <td>${item.sat || '-'}</td>
-                    <td class="checksum-cell" title="${item.checksum}">${item.checksum}</td>
-                    <td class="inscription-cell" title="${item.inscription_id || ''}">${item.inscription_id || '-'}</td>
-                </tr>
-            `).join('');
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = filteredData.slice(startIndex, endIndex);
+            
+            tbody.innerHTML = pageData.map(item => {
+                const inscriptionLink = item.inscription_id ? 
+                    `<a href="https://ordinals.com/inscription/${item.inscription_id}" target="_blank" style="color: #007bff; text-decoration: none;">${item.inscription_id}</a>` : 
+                    '-';
+                
+                return `
+                    <tr>
+                        <td>${item.id}</td>
+                        <td class="txid-cell" title="${item.txid}">${item.txid}</td>
+                        <td>${item.sat || '-'}</td>
+                        <td class="checksum-cell" title="${item.checksum}">${item.checksum}</td>
+                        <td class="inscription-cell" title="${item.inscription_id || ''}">${inscriptionLink}</td>
+                    </tr>
+                `;
+            }).join('');
             
             table.style.display = 'table';
             empty.style.display = 'none';
+            
+            // Update pagination
+            if (totalPages > 1) {
+                pagination.style.display = 'block';
+                document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages} (${filteredData.length} total entries)`;
+                document.getElementById('prevPage').disabled = currentPage === 1;
+                document.getElementById('nextPage').disabled = currentPage === totalPages;
+            } else {
+                pagination.style.display = 'none';
+            }
+        }
+        
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        }
+        
+        function nextPage() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                updateTable();
+            }
         }
         
         // Event listeners
-        document.getElementById('searchTxid').addEventListener('input', updateTable);
-        document.getElementById('searchChecksum').addEventListener('input', updateTable);
-        document.getElementById('filterSat').addEventListener('change', updateTable);
-        document.getElementById('filterInscription').addEventListener('change', updateTable);
+        document.getElementById('searchTxid').addEventListener('input', () => { currentPage = 1; updateTable(); });
+        document.getElementById('searchChecksum').addEventListener('input', () => { currentPage = 1; updateTable(); });
+        document.getElementById('filterSat').addEventListener('change', () => { currentPage = 1; updateTable(); });
+        document.getElementById('filterInscription').addEventListener('change', () => { currentPage = 1; updateTable(); });
         
         // Load data on page load
         loadData();
