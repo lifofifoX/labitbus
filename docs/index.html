@@ -1,429 +1,255 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Labitbu Database</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Labitbu Database</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            dark: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617',
+            }
+          }
         }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a1a;
-            color: #e0e0e0;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #ffffff;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat {
-            background: #2d2d2d;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            text-align: center;
-            border: 1px solid #404040;
-        }
-        
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #4fc3f7;
-        }
-        
-        .stat-label {
-            color: #b0b0b0;
-            margin-top: 5px;
-        }
-        
-        .controls {
-            background: #2d2d2d;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
-            border: 1px solid #404040;
-        }
-        
-        .controls-row {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        input, select {
-            padding: 8px 12px;
-            border: 1px solid #404040;
-            border-radius: 4px;
-            font-size: 14px;
-            background: #1a1a1a;
-            color: #e0e0e0;
-        }
-        
-        button {
-            background: #4fc3f7;
-            color: #1a1a1a;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        button:hover {
-            background: #29b6f6;
-        }
-        
-        button:disabled {
-            background: #404040;
-            color: #808080;
-            cursor: not-allowed;
-        }
-        
-        table {
-            width: 100%;
-            background: #2d2d2d;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            overflow: hidden;
-            table-layout: fixed;
-            border: 1px solid #404040;
-        }
-        
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #404040;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        .id-cell {
-            max-width: 10px;
-            width: 10px;
-            min-width: 10px;
-        }
-        
-        .txid-cell {
-            max-width: 200px;
-            width: 200px;
-        }
-        
-        .sat-cell {
-            max-width: 120px;
-            width: 120px;
-        }
-        
-        .checksum-cell {
-            max-width: 150px;
-            width: 150px;
-        }
-        
-        .inscription-cell {
-            max-width: 200px;
-            width: 200px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-        
-        th {
-            background: #404040;
-            font-weight: 600;
-            color: #ffffff;
-        }
-        
-        tr:hover {
-            background: #404040;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #b0b0b0;
-        }
-        
-        .error {
-            text-align: center;
-            padding: 20px;
-            color: #ff6b6b;
-            background: #2d1a1a;
-            border-radius: 8px;
-            margin: 20px 0;
-            border: 1px solid #404040;
-        }
-        
-        .last-updated {
-            text-align: center;
-            color: #b0b0b0;
-            margin: 20px 0;
-            font-size: 14px;
-        }
-        
-        .empty {
-            text-align: center;
-            padding: 40px;
-            color: #b0b0b0;
-        }
-    </style>
+      }
+    }
+  </script>
 </head>
-<body>
-    <div class="container">
-        <h1>Labitbu Database</h1>
-        
-        <div style="text-align: center; margin-bottom: 30px; padding: 15px; background: #2d1a1a; border: 1px solid #404040; border-radius: 8px; color: #ff6b6b;">
-            <strong>⚠️ Unofficial & Experimental</strong><br>
-            This is an unofficial Labitbu index. Data may be incomplete or inaccurate. Use at your own risk.
-        </div>
-        
-        <div style="text-align: center; margin-bottom: 30px; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; color: #0c5460;">
-            <strong>🔗 Wrap Your Labitbu</strong><br>
-            Found your Labitbu? <a href="https://tx.dev/labitbu" target="_blank" style="color: #007bff; text-decoration: none; font-weight: bold;">Wrap it as an inscription</a> to preserve it on the same sat. <a href="https://x.com/lifofifo/status/1952057912043470968" target="_blank" style="color: #007bff; text-decoration: none;">Learn more</a>.
-        </div>
-        
-        <div class="stats" id="stats">
-            <div class="stat">
-                <div class="stat-number" id="totalEntries">-</div>
-                <div class="stat-label">Total Entries</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" id="entriesWithSat">-</div>
-                <div class="stat-label">With Sat</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" id="entriesWithInscription">-</div>
-                <div class="stat-label">With Inscription</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" id="uniqueChecksums">-</div>
-                <div class="stat-label">Unique Images</div>
-            </div>
-        </div>
-        
-        <div class="controls">
-            <div class="controls-row">
-                <input type="text" id="searchTxid" placeholder="Search TXID...">
-                <input type="text" id="searchChecksum" placeholder="Search checksum...">
-                <select id="filterSat">
-                    <option value="">All entries</option>
-                    <option value="has_sat">Has sat</option>
-                    <option value="no_sat">No sat</option>
-                </select>
-                <select id="filterInscription">
-                    <option value="">All entries</option>
-                    <option value="has_inscription">Has inscription</option>
-                    <option value="no_inscription">No inscription</option>
-                </select>
-                <button onclick="loadData()">Refresh</button>
-            </div>
-        </div>
-        
-        <div id="lastUpdated" class="last-updated"></div>
-        
-        <div id="loading" class="loading">Loading data...</div>
-        <div id="error" class="error" style="display: none;"></div>
-        
-        <table id="dataTable" style="display: none;">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>TXID</th>
-                    <th>Sat</th>
-                    <th>Checksum</th>
-                    <th>Inscription ID</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-            </tbody>
-        </table>
-        
-        <div id="pagination" style="display: none; text-align: center; margin-top: 20px;">
-            <button id="prevPage" onclick="previousPage()" style="margin-right: 10px;">← Previous</button>
-            <span id="pageInfo" style="margin: 0 20px;"></span>
-            <button id="nextPage" onclick="nextPage()" style="margin-left: 10px;">Next →</button>
-        </div>
-        
-        <div id="empty" class="empty" style="display: none;">
-            No entries found matching your criteria.
-        </div>
+<body class="bg-black text-green-400 min-h-screen">
+  <div class="max-w-7xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-8 text-green-400">Labitbu Database</h1>
+    
+    <div class="text-center mb-8 p-4 bg-red-900/20 border border-red-500/50 rounded-lg">
+      <strong class="text-red-400">⚠️ Unofficial & Experimental</strong><br>
+      <span class="text-gray-400">This is an unofficial Labitbu index. Data may be incomplete or inaccurate. Use at your own risk.</span>
     </div>
+    
+    <div class="text-center mb-8 p-4 bg-blue-900/20 border border-blue-500/50 rounded-lg">
+      <strong class="text-blue-400">🔗 Wrap Your Labitbu</strong><br>
+      <span class="text-gray-400">Found your Labitbu? <a href="https://tx.dev/labitbu" target="_blank" class="text-cyan-400 hover:text-cyan-300 font-semibold">Wrap it as an inscription</a> to preserve it on the same sat. <a href="https://x.com/lifofifo/status/1952057912043470968" target="_blank" class="text-cyan-400 hover:text-cyan-300">Learn more</a>.</span>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-lg border border-green-500/30 text-center">
+        <div class="text-3xl font-bold text-green-400" id="totalEntries">-</div>
+        <div class="text-gray-400 mt-2">Total Entries</div>
+      </div>
+      <div class="bg-gray-900 p-6 rounded-lg border border-green-500/30 text-center">
+        <div class="text-3xl font-bold text-green-400" id="entriesWithInscription">-</div>
+        <div class="text-gray-400 mt-2">With Inscription</div>
+      </div>
+      <div class="bg-gray-900 p-6 rounded-lg border border-green-500/30 text-center">
+        <div class="text-3xl font-bold text-green-400" id="uniqueChecksums">-</div>
+        <div class="text-gray-400 mt-2">Unique Images</div>
+      </div>
+    </div>
+    
+    <div class="bg-gray-900 p-4 sm:p-6 rounded-lg border border-green-500/30 mb-6">
+      <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+        <input type="text" id="searchTxid" placeholder="Search TXID..." class="px-3 py-2 bg-black border border-green-500/50 rounded text-green-400 placeholder-gray-500 flex-1 min-w-0">
+        <select id="filterSat" class="px-3 py-2 bg-black border border-green-500/50 rounded text-green-400">
+          <option value="">All entries</option>
+          <option value="has_sat">Has sat</option>
+          <option value="no_sat">No sat</option>
+        </select>
+        <select id="filterInscription" class="px-3 py-2 bg-black border border-green-500/50 rounded text-green-400">
+          <option value="">All entries</option>
+          <option value="has_inscription">Has inscription</option>
+          <option value="no_inscription">No inscription</option>
+        </select>
+        <button onclick="loadData()" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-black rounded font-medium whitespace-nowrap">Refresh</button>
+      </div>
+    </div>
+    
+    <div id="loading" class="text-center py-10 text-gray-400">Loading data...</div>
+    <div id="error" class="text-center p-6 bg-red-900/20 border border-red-500/30 rounded-lg text-red-300 hidden"></div>
+    
+    <div class="bg-gray-900 rounded-lg border border-green-500/30">
+      <div class="overflow-x-auto">
+        <table id="dataTable" class="w-full hidden min-w-max">
+        <thead>
+          <tr class="bg-gray-800">
+            <th class="px-4 py-3 text-left font-semibold text-gray-400">ID</th>
+            <th class="px-4 py-3 text-left font-semibold text-gray-400">TXID</th>
+            <th class="px-4 py-3 text-left font-semibold text-gray-400">SAT</th>
+            <th class="px-4 py-3 text-left font-semibold text-gray-400">Inscription ID</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody" class="divide-y divide-green-500/20">
+        </tbody>
+      </table>
+      </div>
+    </div>
+    
+    <div id="pagination" class="text-center mt-6 hidden">
+      <button id="prevPage" onclick="previousPage()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded mr-4 disabled:opacity-50 disabled:cursor-not-allowed">← Previous</button>
+      <span id="pageInfo" class="mx-6 text-gray-400"></span>
+      <button id="nextPage" onclick="nextPage()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded ml-4 disabled:opacity-50 disabled:cursor-not-allowed">Next →</button>
+    </div>
+    
+    <div id="empty" class="text-center py-10 text-gray-400 hidden">
+      No entries found matching your criteria.
+    </div>
+  </div>
 
-    <script>
-        let allData = [];
-        let stats = {};
-        let currentPage = 1;
-        let itemsPerPage = 50;
-        let filteredData = [];
-        
-        async function loadData() {
-            const loading = document.getElementById('loading');
-            const error = document.getElementById('error');
-            const table = document.getElementById('dataTable');
-            const empty = document.getElementById('empty');
-            
-            loading.style.display = 'block';
-            error.style.display = 'none';
-            table.style.display = 'none';
-            empty.style.display = 'none';
-            
-            try {
-                const response = await fetch('./db_export.json');
-                if (!response.ok) {
-                    throw new Error('Failed to load database export');
-                }
-                
-                const exportData = await response.json();
-                allData = exportData.data;
-                stats = exportData.stats;
-                
-                updateStats();
-                updateTable();
-                
-                if (exportData.lastUpdated) {
-                    const date = new Date(exportData.lastUpdated);
-                    document.getElementById('lastUpdated').textContent = `Last updated: ${date.toLocaleString()}`;
-                }
-                
-            } catch (err) {
-                error.textContent = `Error loading data: ${err.message}`;
-                error.style.display = 'block';
-            } finally {
-                loading.style.display = 'none';
-            }
+  <script>
+    let allData = [];
+    let stats = {};
+    let currentPage = 1;
+    let itemsPerPage = 50;
+    let filteredData = [];
+    
+    async function loadData() {
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+      const table = document.getElementById('dataTable');
+      const empty = document.getElementById('empty');
+      
+      loading.classList.remove('hidden');
+      error.classList.add('hidden');
+      table.classList.add('hidden');
+      empty.classList.add('hidden');
+      
+      try {
+        const response = await fetch('./db_export.json');
+        if (!response.ok) {
+          throw new Error('Failed to load database export');
         }
         
-        function updateStats() {
-            if (stats.total_entries !== undefined) {
-                document.getElementById('totalEntries').textContent = stats.total_entries.toLocaleString();
-                document.getElementById('entriesWithSat').textContent = stats.entries_with_sat.toLocaleString();
-                document.getElementById('entriesWithInscription').textContent = stats.entries_with_inscription.toLocaleString();
-                document.getElementById('uniqueChecksums').textContent = stats.unique_checksums.toLocaleString();
-            } else {
-                const total = allData.length;
-                const withSat = allData.filter(d => d.sat !== null).length;
-                const withInscription = allData.filter(d => d.inscription_id !== null).length;
-                const uniqueChecksums = new Set(allData.map(d => d.checksum)).size;
-                
-                document.getElementById('totalEntries').textContent = total.toLocaleString();
-                document.getElementById('entriesWithSat').textContent = withSat.toLocaleString();
-                document.getElementById('entriesWithInscription').textContent = withInscription.toLocaleString();
-                document.getElementById('uniqueChecksums').textContent = uniqueChecksums.toLocaleString();
-            }
-        }
+        const exportData = await response.json();
+        allData = exportData.data;
+        stats = exportData.stats;
         
-        function updateTable() {
-            const tbody = document.getElementById('tableBody');
-            const table = document.getElementById('dataTable');
-            const empty = document.getElementById('empty');
-            const pagination = document.getElementById('pagination');
-            
-            const searchTxid = document.getElementById('searchTxid').value.toLowerCase();
-            const searchChecksum = document.getElementById('searchChecksum').value.toLowerCase();
-            const filterSat = document.getElementById('filterSat').value;
-            const filterInscription = document.getElementById('filterInscription').value;
-            
-            filteredData = allData.filter(item => {
-                if (searchTxid && !item.txid.toLowerCase().includes(searchTxid)) return false;
-                if (searchChecksum && !item.checksum.toLowerCase().includes(searchChecksum)) return false;
-                if (filterSat === 'has_sat' && item.sat === null) return false;
-                if (filterSat === 'no_sat' && item.sat !== null) return false;
-                if (filterInscription === 'has_inscription' && item.inscription_id === null) return false;
-                if (filterInscription === 'no_inscription' && item.inscription_id !== null) return false;
-                return true;
-            });
-            
-            if (filteredData.length === 0) {
-                table.style.display = 'none';
-                pagination.style.display = 'none';
-                empty.style.display = 'block';
-                return;
-            }
-            
-            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const pageData = filteredData.slice(startIndex, endIndex);
-            
-            tbody.innerHTML = pageData.map(item => {
-                const inscriptionLink = item.inscription_id ? 
-                    `<a href="https://ordinals.com/inscription/${item.inscription_id}" target="_blank" style="color: #007bff; text-decoration: none;">${item.inscription_id}</a>` : 
-                    '-';
-                
-                return `
-                    <tr>
-                        <td class="id-cell">${item.id}</td>
-                        <td class="txid-cell" title="${item.txid}">${item.txid}</td>
-                        <td class="sat-cell">${item.sat || '-'}</td>
-                        <td class="checksum-cell" title="${item.checksum}">${item.checksum}</td>
-                        <td class="inscription-cell" title="${item.inscription_id || ''}">${inscriptionLink}</td>
-                    </tr>
-                `;
-            }).join('');
-            
-            table.style.display = 'table';
-            empty.style.display = 'none';
-            
-            // Update pagination
-            if (totalPages > 1) {
-                pagination.style.display = 'block';
-                document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages} (${filteredData.length} total entries)`;
-                document.getElementById('prevPage').disabled = currentPage === 1;
-                document.getElementById('nextPage').disabled = currentPage === totalPages;
-            } else {
-                pagination.style.display = 'none';
-            }
-        }
+        updateStats();
+        updateTable();
         
-        function previousPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                updateTable();
-            }
-        }
+      } catch (err) {
+        error.textContent = `Error loading data: ${err.message}`;
+        error.classList.remove('hidden');
+      } finally {
+        loading.classList.add('hidden');
+      }
+    }
+    
+    function updateStats() {
+      if (stats.total_entries !== undefined) {
+        document.getElementById('totalEntries').textContent = stats.total_entries.toLocaleString();
+        document.getElementById('entriesWithInscription').textContent = stats.entries_with_inscription.toLocaleString();
+        document.getElementById('uniqueChecksums').textContent = stats.unique_checksums.toLocaleString();
+      } else {
+        const total = allData.length;
+        const withInscription = allData.filter(d => d.inscription_id !== null).length;
+        const uniqueChecksums = new Set(allData.map(d => d.checksum)).size;
         
-        function nextPage() {
-            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                updateTable();
-            }
-        }
+        document.getElementById('totalEntries').textContent = total.toLocaleString();
+        document.getElementById('entriesWithInscription').textContent = withInscription.toLocaleString();
+        document.getElementById('uniqueChecksums').textContent = uniqueChecksums.toLocaleString();
+      }
+    }
+    
+    function updateTable() {
+      const tbody = document.getElementById('tableBody');
+      const table = document.getElementById('dataTable');
+      const empty = document.getElementById('empty');
+      const pagination = document.getElementById('pagination');
+      
+      const searchTxid = document.getElementById('searchTxid').value.toLowerCase();
+      const filterSat = document.getElementById('filterSat').value;
+      const filterInscription = document.getElementById('filterInscription').value;
+      
+      filteredData = allData.filter(item => {
+        if (searchTxid && !item.txid.toLowerCase().includes(searchTxid)) return false;
+        if (filterSat === 'has_sat' && item.sat === null) return false;
+        if (filterSat === 'no_sat' && item.sat !== null) return false;
+        if (filterInscription === 'has_inscription' && item.inscription_id === null) return false;
+        if (filterInscription === 'no_inscription' && item.inscription_id !== null) return false;
+        return true;
+      });
+      
+      if (filteredData.length === 0) {
+        table.classList.add('hidden');
+        pagination.classList.add('hidden');
+        empty.classList.remove('hidden');
+        return;
+      }
+      
+      const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pageData = filteredData.slice(startIndex, endIndex);
+      
+      tbody.innerHTML = pageData.map(item => {
+        const shortTxid = item.txid.substring(0, 8) + '...' + item.txid.substring(item.txid.length - 8)
+        const shortInscription = item.inscription_id ? 
+          item.inscription_id.substring(0, 8) + '...' + item.inscription_id.substring(item.inscription_id.length - 8) : 
+          '-'
         
-        // Event listeners
-        document.getElementById('searchTxid').addEventListener('input', () => { currentPage = 1; updateTable(); });
-        document.getElementById('searchChecksum').addEventListener('input', () => { currentPage = 1; updateTable(); });
-        document.getElementById('filterSat').addEventListener('change', () => { currentPage = 1; updateTable(); });
-        document.getElementById('filterInscription').addEventListener('change', () => { currentPage = 1; updateTable(); });
-        
-        // Load data on page load
-        loadData();
-    </script>
+        const inscriptionLink = item.inscription_id ? 
+          `<a href="https://ordinals.com/inscription/${item.inscription_id}" target="_blank" class="text-purple-400 hover:text-purple-300">${shortInscription}</a>` : 
+          '-';
+      
+        return `
+          <tr class="hover:bg-gray-800">
+            <td class="px-4 py-3 text-sm text-green-400">${item.id}</td>
+            <td class="px-4 py-3 text-sm truncate text-blue-400" title="${item.txid}">
+              <a href="https://mempool.space/tx/${item.txid}" target="_blank" class="hover:text-blue-300">${shortTxid}</a>
+            </td>
+            <td class="px-4 py-3 text-sm text-yellow-400">
+              ${item.sat ? `<a href="https://ordinals.com/sat/${item.sat}" target="_blank" class="hover:text-yellow-300">${item.sat}</a>` : '-'}
+            </td>
+            <td class="px-4 py-3 text-sm truncate text-purple-400" title="${item.inscription_id || ''}">${inscriptionLink}</td>
+          </tr>
+        `;
+      }).join('');
+      
+      table.classList.remove('hidden');
+      empty.classList.add('hidden');
+      
+      if (totalPages > 1) {
+        pagination.classList.remove('hidden');
+        document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages} (${filteredData.length} total entries)`;
+        document.getElementById('prevPage').disabled = currentPage === 1;
+        document.getElementById('nextPage').disabled = currentPage === totalPages;
+      } else {
+        pagination.classList.add('hidden');
+      }
+    }
+    
+    function previousPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        updateTable();
+      }
+    }
+    
+    function nextPage() {
+      const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        updateTable();
+      }
+    }
+    
+    document.getElementById('searchTxid').addEventListener('input', () => { currentPage = 1; updateTable(); });
+    document.getElementById('filterSat').addEventListener('change', () => { currentPage = 1; updateTable(); });
+    document.getElementById('filterInscription').addEventListener('change', () => { currentPage = 1; updateTable(); });
+    
+    loadData();
+  </script>
 </body>
 </html> 
