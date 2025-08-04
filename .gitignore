@@ -45,3 +45,4 @@ data/
 *.db
 *.sqlite
 *.sqlite3
+test_server.js
