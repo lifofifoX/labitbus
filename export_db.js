@@ -12,7 +12,7 @@ async function exportDatabase() {
   const db = new sqlite3.Database(dbPath)
   
   return new Promise((resolve, reject) => {
-    db.all('SELECT * FROM labitbus ORDER BY id DESC', (err, rows) => {
+    db.all('SELECT * FROM labitbus ORDER BY id ASC', (err, rows) => {
       if (err) {
         reject(err)
       } else {
