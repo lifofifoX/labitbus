@@ -47,3 +47,4 @@ data/
 *.sqlite3
 test_server.js
 test_index.js
+test_minters.js
