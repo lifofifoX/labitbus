@@ -49,3 +49,5 @@ test_server.js
 test_index.js
 test_minters.js
 minter_analysis.json
+index2.json
+lib/compare_indexes.js

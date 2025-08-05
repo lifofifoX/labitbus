@@ -8,7 +8,8 @@
     "setup": "node lib/setup.js",
     "reset": "node lib/reset.js",
     "sats": "node lib/populate_sats.js",
-    "validate_inscriptions": "node lib/validate_inscriptions.js"
+    "validate_inscriptions": "node lib/validate_inscriptions.js",
+    "compare": "node lib/compare_indexes.js"
   },
   "dependencies": {
     "@cmdcode/tapscript": "^1.5.3",
